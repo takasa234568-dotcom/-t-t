@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bếp Nhỏ — Quản lý nhà hàng</title>
+<style>
+:root{--ink:#29323d;--muted:#687585;--cream:#fff8ed;--paper:#fffdf8;--orange:#ef8354;--green:#4d9078;--red:#c95555;--line:#eadfce;--gold:#e6b84f}
+*{box-sizing:border-box}body{margin:0;background:#f3e9da;color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 12px;background:var(--ink);color:white;font-weight:700;transition:.15s}
+button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.app{max-width:1250px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:54px;height:54px;border-radius:16px;background:#ffe1b9;display:grid;place-items:center;font-size:30px;box-shadow:inset 0 -4px #f4c98e}.brand h1{font-size:24px;margin:0}.brand p{margin:2px 0;color:var(--muted);font-size:13px}
+.stats{display:flex;gap:8px;flex-wrap:wrap}.stat{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 12px;min-width:92px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:18px}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:14px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 5px 18px #5841260b}.panelhead{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}.panelhead h2{font-size:16px;margin:0}.sub{font-size:12px;color:var(--muted)}.restaurant{padding:16px;background:#f9efdF}.room{position:relative;min-height:315px;border-radius:14px;border:3px solid #e5d2b6;overflow:hidden;background-color:#f8e7cd;background-image:linear-gradient(90deg,#ead9bd 1px,transparent 1px),linear-gradient(#ead9bd 1px,transparent 1px);background-size:44px 44px}
+.kitchen{position:absolute;left:14px;top:14px;width:155px;height:90px;border-radius:13px;background:#d7e8dc;border:2px solid #9bbba6;display:grid;place-items:center;text-align:center;font-weight:800}.kitchen span{font-size:29px;display:block}
+.door{position:absolute;right:12px;top:12px;background:#fff8ed;border:2px solid #d9c6a9;border-radius:10px;padding:7px;font-size:12px}
+.table{position:absolute;width:92px;height:66px;border-radius:13px;background:#c78f61;border:4px solid #a96e44;box-shadow:0 5px 0 #98613e;display:grid;place-items:center;color:white;font-size:23px}
+.table:before,.table:after{content:"";position:absolute;width:20px;height:15px;border-radius:6px;background:#719f8a;border:2px solid #4d816b;top:-12px}.table:before{left:8px}.table:after{right:8px}
+.t1{left:25%;top:35%}.t2{left:59%;top:35%}.t3{left:42%;top:68%}
+.table.occupied{background:#e8b95c;border-color:#ca9438;box-shadow:0 5px 0 #b57c2d}.table.occupied:before,.table.occupied:after{background:#e8b95c;border-color:#ca9438}
+.customer{position:absolute;font-size:22px;filter:drop-shadow(0 2px 1px #0002)}.c1{left:29%;top:29%}.c2{left:63%;top:29%}.c3{left:46%;top:62%}
+.roomnote{position:absolute;bottom:10px;left:12px;background:#fffaf0d9;border-radius:9px;padding:6px 9px;font-size:12px;color:#6b6256}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.primary{background:var(--orange)}.success{background:var(--green)}.soft{background:#f4e6d2;color:var(--ink)}.danger{background:var(--red)}
+.rightcol{display:flex;flex-direction:column;gap:14px}.orders{padding:12px;display:flex;flex-direction:column;gap:9px;max-height:330px;overflow:auto}.order{border:1px solid var(--line);border-radius:13px;padding:11px;background:#fffaf2}.order.active{border:2px solid var(--orange);padding:10px}.orderrow{display:flex;justify-content:space-between;gap:8px;align-items:center}.customername{font-weight:800}.pill{font-size:11px;border-radius:99px;padding:3px 7px;background:#f7e3bb;color:#805b17;font-weight:800}.pill.red{background:#f7d8d5;color:#9d3434}.order p{margin:7px 0;color:var(--muted);font-size:12px}.order button{font-size:12px;padding:7px 9px}.order .orderrow + .orderrow{margin-top:8px}
+.menu{padding:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dish{border:1px solid var(--line);background:#fffaf2;border-radius:12px;padding:10px;text-align:left;color:var(--ink)}.dish .emoji{font-size:25px;float:right}.dish b{display:block}.dish small{color:var(--muted);display:block;margin-top:3px}.dish:disabled{opacity:.45}
+.inventory{padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ingredient{background:#f8f0e4;border-radius:10px;padding:9px;text-align:center}.ingredient span{font-size:20px}.ingredient b{display:block}.ingredient small{color:var(--muted)}
+.footergrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.upgradebody{padding:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.upgrade{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fffaf2}.upgrade b{display:block}.upgrade p{font-size:12px;color:var(--muted);margin:5px 0 9px}.upgrade button{width:100%;font-size:12px}.log{padding:12px;max-height:165px;overflow:auto;font-size:12px;color:var(--muted)}.log div{padding:5px 0;border-bottom:1px dashed #eee0cd}
+.bar{height:6px;border-radius:99px;background:#eadfce;overflow:hidden;margin-top:7px}.bar span{height:100%;display:block;background:var(--green);width:50%}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#29323d;color:white;padding:11px 16px;border-radius:12px;box-shadow:0 8px 30px #0002;z-index:5;max-width:90vw;text-align:center}
+.modalback{position:fixed;inset:0;background:#20283288;display:grid;place-items:center;padding:18px;z-index:10}.modal{background:var(--paper);padding:24px;border-radius:18px;max-width:460px;width:100%;box-shadow:0 20px 80px #0003}.modal h2{margin-top:0}.modal li{margin:8px 0}.hidden{display:none!important}
+@media(max-width:800px){.layout,.footergrid{grid-template-columns:1fr}.app{padding:10px}.room{min-height:300px}.table{transform:scale(.85)}.stat{min-width:75px}.stats{width:100%}.stat{flex:1}.brand h1{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="brand"><div class="logo">🍲</div><div><h1>Bếp Nhỏ <span style="color:#ef8354">Restaurant</span></h1><p>Quản lý nhà hàng · Ca làm hôm nay</p></div></div>
+ <div class="stats">
+  <div class="stat"><small>💰 Tiền mặt</small><strong id="money">₫500.000</strong></div>
+  <div class="stat"><small>⭐ Danh tiếng</small><strong id="rep">50</strong></div>
+  <div class="stat"><small>📅 Ngày</small><strong id="day">1</strong></div>
+  <div class="stat"><small>👩‍🍳 Nhân viên</small><strong id="staff">1</strong></div>
+ </div>
+</header>
+<div class="layout">
+ <section class="panel">
+  <div class="panelhead"><div><h2>🏠 Không gian nhà hàng</h2><div class="sub" id="status">Nhà hàng đang mở cửa</div></div><button class="soft" id="helpBtn">Cách chơi</button></div>
+  <div class="restaurant">
+   <div class="room">
+    <div class="kitchen"><div><span>🍳</span>BẾP</div></div><div class="door">🚪 Lối vào</div>
+    <div class="table t1" id="table1">🪑</div><div class="table t2" id="table2">🪑</div><div class="table t3" id="table3">🪑</div>
+    <div class="customer c1 hidden" id="cust1">🧑</div><div class="customer c2 hidden" id="cust2">👩</div><div class="customer c3 hidden" id="cust3">🧔</div>
+    <div class="roomnote" id="roomnote">Nhà hàng nhỏ, nhưng đầy tiềm năng!</div>
+   </div>
+   <div class="actions">
+    <button class="primary" id="nextBtn">⏭️ Tiếp tục ca (+ khách)</button>
+    <button class="success" id="restockBtn">📦 Nhập nguyên liệu</button>
+    <button class="soft" id="saveBtn">💾 Lưu ngay</button>
+    <button class="soft" id="resetBtn">↻ Chơi mới</button>
+   </div>
+  </div>
+  <div class="panelhead"><div><h2>🍽️ Thực đơn</h2><div class="sub">Chọn món để nấu cho đơn đang chọn</div></div><span class="pill" id="selectedLabel">Chưa chọn đơn</span></div>
+  <div class="menu" id="menu"></div>
+ </section>
+ <div class="rightcol">
+  <section class="panel">
+   <div class="panelhead"><div><h2>🧾 Đơn gọi món</h2><div class="sub">Chọn đơn rồi nấu đúng món khách yêu cầu</div></div><span class="pill" id="orderCount">0 đơn</span></div>
+   <div class="orders" id="orders"></div>
+  </section>
+  <section class="panel">
+   <div class="panelhead"><div><h2>🥕 Kho nguyên liệu</h2><div class="sub">Mỗi món sẽ tiêu hao nguyên liệu</div></div><span class="pill" id="stockState">Đủ hàng</span></div>
+   <div class="inventory" id="inventory"></div>
+  </section>
+ </div>
+</div>
+<div class="footergrid">
+ <section class="panel"><div class="panelhead"><div><h2>🛠️ Phát triển nhà hàng</h2><div class="sub">Dùng lợi nhuận để đầu tư dài hạn</div></div></div><div class="upgradebody" id="upgrades"></div></section>
+ <section class="panel"><div class="panelhead"><div><h2>📒 Nhật ký nhà hàng</h2><div class="sub">Các sự kiện gần đây</div></div></div><div class="log" id="log"></div></section>
+</div>
+</div>
+<div id="toast" class="toast hidden"></div>
+<div id="modalback" class="modalback hidden"><div class="modal"><h2>🍲 Chào mừng đến Bếp Nhỏ!</h2><p>Điều hành nhà hàng của riêng bạn: nhận khách, nấu đúng món, kiếm tiền và nâng cấp.</p><ul><li>Chọn đơn gọi món ở cột bên phải.</li><li>Chọn món trong thực đơn để nấu. Món đúng sẽ được phục vụ và nhận tiền.</li><li>Khách có yêu cầu riêng như “không cay” hoặc “thêm phô mai”. Đáp ứng đúng sẽ tăng danh tiếng.</li><li>Nhập nguyên liệu, thuê nhân viên và nâng cấp bếp để phục vụ hiệu quả hơn.</li><li>Tiến trình tự lưu trên trình duyệt này; hãy bấm “Lưu ngay” trước khi xóa dữ liệu trình duyệt.</li></ul><button class="primary" id="closeHelp">Bắt đầu chơi!</button></div></div>
+<script>
+const recipes=[
+ {id:'pho',name:'Phở bò',emoji:'🍜',price:85000,cost:26000,need:{meat:1,noodle:1,veg:1},time:1,desc:'Thịt bò, bánh phở, rau thơm'},
+ {id:'rice',name:'Cơm gà',emoji:'🍗',price:70000,cost:22000,need:{meat:1,rice:1,veg:1},time:1,desc:'Gà thơm, cơm nóng'},
+ {id:'pasta',name:'Mì Ý',emoji:'🍝',price:95000,cost:30000,need:{meat:1,noodle:1,cheese:1},time:2,desc:'Sốt thịt và phô mai'},
+ {id:'salad',name:'Salad',emoji:'🥗',price:55000,cost:15000,need:{veg:2,cheese:1},time:1,desc:'Rau xanh tươi mát'},
+ {id:'cake',name:'Bánh ngọt',emoji:'🍰',price:45000,cost:12000,need:{flour:1,cheese:1},time:1,desc:'Món tráng miệng'}
+];
+const ing={meat:{name:'Thịt',emoji:'🥩'},noodle:{name:'Mì / phở',emoji:'🍜'},veg:{name:'Rau',emoji:'🥬'},rice:{name:'Gạo',emoji:'🍚'},cheese:{name:'Phô mai',emoji:'🧀'},flour:{name:'Bột',emoji:'🌾'}};
+const upgrades=[
+ {id:'tables',name:'Thêm bàn ăn',emoji:'🪑',cost:180000,desc:'Tăng sức chứa khách.',apply:s=>s.capacity=Math.min(5,s.capacity+1),label:s=>`Sức chứa: ${s.capacity}/5`},
+ {id:'stove',name:'Bếp xịn hơn',emoji:'🔥',cost:240000,desc:'Món ăn bán được thêm 10% tiền.',apply:s=>s.stove++,label:s=>`Cấp bếp: ${s.stove}`},
+ {id:'decor',name:'Trang trí đẹp',emoji:'🪴',cost:160000,desc:'Tăng danh tiếng khi phục vụ tốt.',apply:s=>s.decor++,label:s=>`Cấp trang trí: ${s.decor}`},
+ {id:'staff',name:'Thuê nhân viên',emoji:'🧑‍🍳',cost:200000,desc:'Nhân viên hỗ trợ, tăng tiền thưởng cuối ca.',apply:s=>s.staff++,label:s=>`Nhân viên: ${s.staff}`}
+];
+const fresh=()=>({money:500000,rep:50,day:1,staff:1,capacity:3,stove:0,decor:0,stock:{meat:5,noodle:5,veg:7,rice:5,cheese:4,flour:3},orders:[],selected:null,nextId:1,served:0,missed:0,log:['Ngày 1: Nhà hàng đã mở cửa.'],customersSeen:0});
+let s;
+try{s=JSON.parse(localStorage.getItem('bepnho-save'))||fresh()}catch(e){s=fresh()}
+let toastTimer;
+const $=id=>document.getElementById(id);
+const money=n=>'₫'+Math.round(n).toLocaleString('vi-VN');
+function log(msg){s.log.unshift(`Ngày ${s.day}: ${msg}`);s.log=s.log.slice(0,30)}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),2300)}
+function save(silent=false){localStorage.setItem('bepnho-save',JSON.stringify(s));if(!silent)toast('Đã lưu tiến trình trên trình duyệt!')}
+function reqFor(recipe,request){if(request==='Không yêu cầu')return true;if(request==='Không cay')return true;if(request==='Thêm phô mai')return !!recipe.need.cheese;if(request==='Ít rau')return !!recipe.need.veg;return true}
+function createOrder(){
+ const current=s.orders.filter(o=>o.status==='waiting').length;
+ if(current>=s.capacity){toast('Bàn đã kín! Hãy phục vụ khách trước.');return}
+ const pool=[...recipes];const recipe=pool[Math.floor(Math.random()*pool.length)];
+ const requests=['Không yêu cầu','Không cay','Thêm phô mai','Ít rau'];
+ let request=requests[Math.floor(Math.random()*requests.length)];
+ if(request==='Không cay'&&recipe.id!=='pasta') request='Không yêu cầu';
+ if(request==='Thêm phô mai'&&!recipe.need.cheese) request='Không yêu cầu';
+ if(request==='Ít rau'&&!recipe.need.veg) request='Không yêu cầu';
+ const names=['Minh Anh','Tuấn','Khánh Linh','Bảo','An Nhiên','Hoàng'];
+ const faces=['🧑','👩','🧔','👨','👩‍🦰','🧑‍🦱'];
+ const id=s.nextId++;
+ const o={id,name:names[Math.floor(Math.random()*names.length)],face:faces[Math.floor(Math.random()*faces.length)],recipe:recipe.id,request,status:'waiting',patience:3,tip:request==='Không yêu cầu'?0:10000};
+ s.orders.push(o);s.customersSeen++;log(`${o.name} đến nhà hàng và gọi ${recipe.name}${request!=='Không yêu cầu'?' ('+request+')':''}.`);s.selected=id;
+}
+function getRecipe(id){return recipes.find(r=>r.id===id)}
+function canCook(r){return Object.entries(r.need).every(([k,v])=>(s.stock[k]||0)>=v)}
+function cook(id){
+ const o=s.orders.find(o=>o.id===id);if(!o||o.status!=='waiting')return;
+ const r=getRecipe(ridForOrder(o));
+ if(!canCook(r)){toast('Thiếu nguyên liệu! Hãy nhập kho.');return}
+ Object.entries(r.need).forEach(([k,v])=>s.stock[k]-=v);
+ if(o.request!=='Không yêu cầu'&&!reqFor(r,o.request)){toast('Món này không đáp ứng yêu cầu riêng của khách!');return}
+ o.status='served';const revenue=Math.round(r.price*(1+s.stove*.1));const tip=o.tip||0;
+ s.money+=revenue+tip-r.cost*0; s.rep=Math.min(100,s.rep+2+s.decor);s.served++;
+ log(`Đã phục vụ ${r.name} cho ${o.name}: +${money(revenue+tip)}.`);s.selected=null;
+ const waiting=s.orders.filter(x=>x.status==='waiting');if(waiting.length===0&&Math.random()<.45)createOrder();
+ render();save(true);toast(`Phục vụ thành công! +${money(revenue+tip)}`);
+}
+function ridForOrder(o){return o.recipe}
+function render(){
+ $('money').textContent=money(s.money);$('rep').textContent=`${s.rep}/100`;$('day').textContent=s.day;$('staff').textContent=s.staff;
+ $('status').textContent=`Đang mở cửa · Đã phục vụ ${s.served} khách`; $('orderCount').textContent=s.orders.filter(o=>o.status==='waiting').length+' đơn';
+ $('selectedLabel').textContent=s.selected?'Đơn #'+s.selected:'Chưa chọn đơn';
+ const waiting=s.orders.filter(o=>o.status==='waiting');
+ $('orders').innerHTML=waiting.length?waiting.map(o=>{const r=getRecipe(o.recipe);return `<div class="order ${s.selected===o.id?'active':''}"><div class="orderrow"><span class="customername">${o.face} ${o.name}</span><span class="pill ${o.patience===1?'red':''}">⏳ ${o.patience} lượt</span></div><p>Muốn gọi: <b>${r.emoji} ${r.name}</b><br>Yêu cầu: <b>${o.request}</b> · Giá ${money(r.price)}</p><div class="orderrow"><button class="soft" onclick="selectOrder(${o.id})">${s.selected===o.id?'Đang chọn':'Chọn đơn'}</button><button class="primary" onclick="cook(${o.id})">Nấu & phục vụ</button></div></div>`}).join(''):'<div class="sub" style="padding:16px;text-align:center">Chưa có khách. Nhấn “Tiếp tục ca” để đón khách mới.</div>';
+ $('menu').innerHTML=recipes.map(r=>`<button class="dish" onclick="cookSelected('${r.id}')" ${!s.selected||!canCook(r)?'disabled':''}><span class="emoji">${r.emoji}</span><b>${r.name}</b><small>${money(r.price)} · ${r.desc}</small></button>`).join('');
+ $('inventory').innerHTML=Object.entries(ing).map(([k,v])=>`<div class="ingredient"><span>${v.emoji}</span><b>${s.stock[k]||0}</b><small>${v.name}</small></div>`).join('');
+ const low=Object.values(s.stock).some(n=>n<=1);$('stockState').textContent=low?'Sắp hết hàng':'Đủ hàng';$('stockState').className='pill'+(low?' red':'');
+ $('upgrades').innerHTML=upgrades.map(u=>`<div class="upgrade"><b>${u.emoji} ${u.name}</b><p>${u.desc}<br><strong>${u.label(s)}</strong></p><button class="${s.money>=u.cost?'success':'soft'}" onclick="upgrade('${u.id}')" ${s.money<u.cost?'disabled':''}>Mua · ${money(u.cost)}</button></div>`).join('');
+ $('log').innerHTML=s.log.map(x=>`<div>${x}</div>`).join('');
+ ['table1','table2','table3'].forEach((id,i)=>{const o=waiting[i];$(id).classList.toggle('occupied',!!o);$(id).textContent=o?'🍽️':'🪑';$('cust'+(i+1)).classList.toggle('hidden',!o)});
+ $('roomnote').textContent=waiting.length?`${waiting.length} khách đang chờ món. Phục vụ nhanh nhé!`:'Nhà hàng nhỏ, nhưng đầy tiềm năng!';
+ $('nextBtn').disabled=waiting.length>=s.capacity;
+}
+function selectOrder(id){s.selected=id;render()}
+function cookSelected(recipeId){if(!s.selected){toast('Hãy chọn một đơn gọi món trước.');return}const o=s.orders.find(o=>o.id===s.selected);if(!o)return;const r=getRecipe(recipeId);if(r.id!==o.recipe){toast(`Khách này gọi ${getRecipe(o.recipe).name}, không phải ${r.name}.`);return}cook(o.id)}
+function upgrade(id){const u=upgrades.find(x=>x.id===id);if(s.money<u.cost){toast('Chưa đủ tiền để nâng cấp.');return}s.money-=u.cost;u.apply(s);log(`Đã đầu tư: ${u.name}.`);render();save(true);toast(`Đã mua: ${u.name}!`)}
+function restock(){const cost=80000;if(s.money<cost){toast('Cần ít nhất ₫80.000 để nhập nguyên liệu.');return}s.money-=cost;Object.keys(s.stock).forEach(k=>s.stock[k]+=3);log(`Nhập kho nguyên liệu, chi ${money(cost)}.`);render();save(true);toast('Kho đã được bổ sung!')}
+function nextTurn(){
+ s.day++;
+ let lost=0;
+ s.orders.filter(o=>o.status==='waiting').forEach(o=>{o.patience--;if(o.patience<=0){o.status='left';lost++;s.missed++;s.rep=Math.max(0,s.rep-3);log(`${o.name} rời đi vì chờ quá lâu. Danh tiếng -3.`)}});
+ if(lost)toast(`${lost} khách rời đi vì chờ lâu.`);
+ const count=Math.min(s.capacity-s.orders.filter(o=>o.status==='waiting').length,1+(Math.random()<.4?1:0));
+ for(let i=0;i<count;i++)createOrder();
+ const bonus=(s.staff-1)*12000;if(bonus){s.money+=bonus;log(`Nhân viên hỗ trợ cuối ca: +${money(bonus)}.`)}
+ s.orders=s.orders.filter(o=>o.status==='waiting'||o.status==='served').slice(-15);
+ log('Ca làm mới bắt đầu.');render();save(true);
+}
+$('nextBtn').onclick=nextTurn;$('restockBtn').onclick=restock;$('saveBtn').onclick=()=>save();$('helpBtn').onclick=()=> $('modalback').classList.remove('hidden');$('closeHelp').onclick=()=> $('modalback').classList.add('hidden');
+$('resetBtn').onclick=()=>{if(confirm('Chơi mới sẽ xóa tiến trình đã lưu. Bạn chắc chứ?')){s=fresh();createOrder();render();save(true);toast('Đã bắt đầu nhà hàng mới.')}};
+window.selectOrder=selectOrder;window.cook=cook;window.cookSelected=cookSelected;window.upgrade=upgrade;
+if(!s.orders.length)createOrder();
+render();
+if(!localStorage.getItem('bepnho-intro')){$('modalback').classList.remove('hidden');localStorage.setItem('bepnho-intro','1')}
+</script>
+</body></html>
